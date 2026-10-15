@@ -188,3 +188,33 @@ body{background:#805637 url('assets/user-wood.png') center top/313px 406px repea
 .ending-outcomes h3{font-size:19px;line-height:1.6;color:#191d8f;margin:0 0 8px}
 .ending-outcomes p{font-size:15px;line-height:1.85;margin:0}.ending-panel .continue-note{font-size:15px;line-height:1.85;border-top:1px solid var(--line);padding-top:18px}
 @media(max-width:350px){.view#end{margin:20px 10px}.view#end>.ending-panel{padding:22px 14px}.view#extra>details.combat-panel.extra-rules{padding:10px 14px}}
+
+/* Local preparation tabs and clearer role heading. */
+#learn .role-heading h2{color:var(--red);font-size:37px;line-height:1.4;margin-bottom:12px}#learn>p{font-size:14px;line-height:1.8}#roles .role h3{color:var(--red);font-size:19px;margin-top:12px}
+.setup-tabs{display:flex;gap:8px;margin:0 0 24px;border-bottom:1px solid var(--line)}.setup-tabs>button{flex:1;min-width:0;min-height:48px;font-size:14px;background:transparent;color:var(--ink);padding:10px 6px;border-bottom:3px solid transparent}.setup-tabs>button[aria-pressed=true]{color:var(--red);border-color:var(--red);font-weight:800}.setup-types>p{font-size:14px;line-height:1.8}.setup-types .attack-row{display:grid;grid-template-columns:80px minmax(0,1fr);gap:18px}.setup-types .attack-row>div>b{color:var(--red);font-size:17px}.setup-types .attack-row p{font-size:14px;line-height:1.85}.setup-types .visual-card>b{font-size:12px}.setup-types[hidden],.setup-content[hidden]{display:none!important}@media(max-width:350px){#learn .role-heading h2{font-size:32px}.setup-tabs>button{font-size:12px}.setup-types .attack-row{grid-template-columns:66px minmax(0,1fr);gap:12px}}
+
+/* Compact rule rows retain a comfortable touch area. */
+.view#extra>details.combat-panel.extra-rules,.view#extra>details.combat-panel.extra-rules:not([open]){padding:0 14px;margin:0 0 8px;box-shadow:none}
+.view#extra>details.combat-panel.extra-rules>summary,.view#extra>details.combat-panel.extra-rules:not([open])>summary{padding:10px 24px 10px 0;min-height:44px;font-size:17px;line-height:1.4;margin:0}
+.view#extra>details.combat-panel.extra-rules>summary small{font-size:11px;line-height:1.4;margin-top:2px}
+.view#extra>details.combat-panel.extra-rules[open]>summary{border-bottom:1px solid var(--line);margin-bottom:12px}
+.view#extra>.section-head .text-button{font-size:inherit;padding:0;min-height:0;display:inline;vertical-align:baseline}
+.view#turn .rule-strip>h3{font-size:22px;line-height:1.5;color:var(--red)}
+
+.lesson-progress{padding:12px 14px;margin:0 0 18px;background:#ead5ad;border:1px solid #967344;color:#351e0f}.lesson-progress>div:first-child{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;font-size:12px;line-height:1.6}.lesson-progress b{color:var(--red);font-size:13px}.lesson-progress-bar{display:flex;gap:4px;margin-top:8px}.lesson-progress-bar>span{height:4px;flex:1;background:#c8b48e}.lesson-progress-bar>.reached{background:var(--red)}
+
+.lesson-progress-bar{gap:5px;margin-top:10px}.lesson-progress-bar>button{flex:1;min-width:0;min-height:44px;padding:7px 0;background:#d6c29c;color:#513b29;border:1px solid #b39a70;font-size:13px;font-weight:700;border-radius:0}.lesson-progress-bar>button.reached{background:#ad8464;color:#fff3df}.lesson-progress-bar>button[aria-current=step]{background:var(--red);border-color:var(--red);color:#fff3df}.progress-hint{display:block;font-size:11px;line-height:1.5;color:var(--muted);margin-top:6px}
+
+/* All seven lesson pages share the same frame and heading scale. */
+.view#learn,.view#setup-types,.view#setup{background:transparent;border:0;box-shadow:none;padding:0;margin:20px 14px}
+#learn>.lesson-content,#setup-types>.lesson-content,#setup>.setup-content{background:#ead5adf5;border:1.5px solid #523520;box-shadow:3px 4px 8px #22140b33;padding:24px 20px;margin:0 0 22px}
+#learn .role-heading h2,#setup-types h2,#setup .section-head h2,#combat .section-head h2,#combat .combat-panel>h3,#combat .barrel-subsection>h3,#extra>.section-head h2,#turn .section-head h2,#turn .rule-strip>h3,#end .section-head h2{font-family:'KoPub Batang',serif;font-size:26px!important;line-height:1.45;font-weight:700;color:#9c3024!important;letter-spacing:-.8px}
+@media(max-width:350px){.view#learn,.view#setup-types,.view#setup{margin:20px 10px}#learn>.lesson-content,#setup-types>.lesson-content,#setup>.setup-content{padding:22px 14px}}
+
+.view#combat .judgment-rules ol{padding-left:22px;margin:12px 0;font-size:14px;line-height:1.85}.view#combat .judgment-rules li{margin:0 0 12px;padding-left:2px}
+
+.view#combat .judgment-rules .judgment-order{font-size:18px;line-height:1.7;color:var(--red);padding-top:18px}.view#combat .judgment-order>strong{font-size:inherit}
+.lesson-complete{background:#ead5adf5;border:1.5px solid #523520;padding:22px 20px;margin-top:22px}.lesson-complete h3{font-size:24px;line-height:1.5;color:var(--red);margin:0 0 12px}.lesson-complete p{font-size:15px;line-height:1.9;margin:0}.lesson-complete .text-button{font-size:inherit;display:inline;padding:0;min-height:0}
+
+/* Dark brown major headings on lesson four. */
+#combat .section-head h2,#combat .combat-panel>h3,#combat .barrel-subsection>h3{color:#351e0f!important}

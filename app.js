@@ -45,25 +45,13 @@ jourdonnais:['주르도네','항상 술통 능력을 가져요','뱅! 효과를 
 'vulture-sam':['벌처 샘','탈락한 사람의 카드를 모두 가져오기','누군가 탈락하면 그 사람의 손패와 앞에 놓인 카드를 모두 내 손패로 가져와요.','시작 생명 4. 가져온 장비는 자동 장착되지 않아요.'],
 'willy-the-kid':['윌리 더 키드','내 턴에 뱅!을 원하는 만큼','내 턴에 뱅! 카드를 여러 장 사용할 수 있어요.','시작 생명 4. 사거리 제한은 그대로 적용해요.']
 };
-const faqs=[
-['뱅! / 기관총을 맞았어요','술통이 있다면 먼저 판정해 하트면 막기해요. 실패하거나 술통이 없다면 빗나감!을 1장 사용해요. 막기하지 못하면 생명 1을 잃어요. 슬랩 더 킬러의 뱅! 카드에는 막기 효과가 2회 필요해요.','missed'],
-['인디언! / 결투가 나왔어요','인디언!: 사용자를 제외한 모두가 뱅! 1장을 버리거나 생명 1을 잃어요. 결투: 지목당한 사람부터 둘이 번갈아 뱅!을 버리고, 먼저 못 버리는 사람이 생명 1을 잃어요. 두 경우 모두 빗나감!과 술통은 사용할 수 없어요.','indians'],
-['생명이 0이 됐어요 / 맥주를 쓰고 싶어요','치명상 직후 즉시 맥주를 써서 생명을 1 이상으로 만들면 살아남아요. 다이너마이트로 생명 2에서 피해 3을 받았다면 맥주 2장이 필요해요. 2명만 남으면 맥주는 효과가 없어요. 주점은 치명상 대응으로 사용할 수 없어요. 시드 케첨은 자신의 회복 능력을 사용할 수 있어요.','beer'],
-['감옥 / 다이너마이트 판정을 해야 해요','더미 위 1장을 뒤집어 왼쪽 아래의 무늬·숫자를 보고 바로 버려요. 그 카드의 효과는 사용하지 않아요. 다이너마이트: 스페이드 2–9면 생명 −3, 그 외에는 왼쪽 다음 생존자에게 넘겨요. 감옥: 하트면 정상 턴, 아니면 턴을 건너뛰어요. 감옥은 어느 결과든 버려요. 둘 다 있으면 다이너마이트가 먼저예요.','dynamite'],
-['저 사람에게 쏠 수 있나요?','생존한 자리만 양방향으로 세어 더 짧은 쪽이 기본 거리예요. 상대 야생마·폴 리그레트는 +1, 내 조준경·로즈 둘란은 −1. 최종 거리는 최소 1. 그 거리가 내 무기 사거리 이하면 뱅!으로 쏠 수 있어요. 강탈은 무기와 무관하게 최종 거리 1만 가능해요.','scope'],
-['남의 카드를 빼앗거나 버리려면?','강탈은 최종 거리 1의 상대에게, 캣 벌로우는 거리와 관계없이 사용해요. 상대 손패에서는 보지 않고 무작위 1장, 앞에 공개된 카드에서는 원하는 1장을 골라요. 강탈한 카드는 내 손패로, 캣 벌로우의 대상 카드는 버린 더미로 가요.','panic'],
-['무기를 바꾸거나 같은 장비를 놓으려면?','앞에 놓인 무기는 1개만 가능해요. 새 무기를 장착하면 기존 무기를 버려요. 내 앞에 같은 이름의 카드 2개를 놓을 수는 없어요. 손패에는 같은 이름의 카드가 여러 장 있어도 괜찮아요. 파란 장비는 손패 한도에 포함되지 않아요.','volcanic'],
-['누가 탈락했어요 / 누가 이기나요?','탈락자는 역할을 공개하고 손패·장착 카드를 버려요. 무법자를 제거한 사람은 3장 보상, 보안관이 부관을 제거하면 손패·장착 카드를 모두 버려요. 보안관이 죽으면 즉시 종료: 배신자만 남았다면 배신자, 그 외는 무법자 승리. 무법자와 배신자가 모두 탈락하면 보안관·부관 승리예요.','sheriff'],
-['카드 더미가 다 떨어졌어요','뽑는 더미가 비면 버린 카드 더미를 섞어 새 뽑는 더미로 만들어요. 카드 효과로 더 뽑았다면 사용을 마친 뒤 턴 종료 때 현재 생명 수만큼만 손패를 남겨요.','stagecoach'],
-['내 턴이 아닌데 카드를 쓸 수 있나요?','일반적으로 내 턴에만 카드를 사용해요. 예외는 공격에 대한 빗나감!, 인디언·결투 대응으로 버리는 뱅!, 치명상 직후의 맥주, 그리고 해당 인물의 특수 능력이에요. 다른 사람이 다치기만 했을 때 임의로 맥주를 쓸 수는 없어요.','missed']
-];
 // Local preview uses the existing sprites. Set false for text-only card rendering.
 const USE_CARD_IMAGES = true;
 const englishNames={sheriff:'Sheriff',deputy:'Deputy',outlaw:'Outlaw',renegade:'Renegade',bang:'Bang!',missed:'Missed!',beer:'Beer',saloon:'Saloon',stagecoach:'Stagecoach','wells-fargo':'Wells Fargo','general-store':'General Store',panic:'Panic!','cat-balou':'Cat Balou',gatling:'Gatling',indians:'Indians!',duel:'Duel','colt-45':'Colt .45',volcanic:'Volcanic',schofield:'Schofield',remington:'Remington','rev-carabine':'Rev. Carabine',winchester:'Winchester',mustang:'Mustang',scope:'Scope',barrel:'Barrel',jail:'Jail',dynamite:'Dynamite','bart-cassidy':'Bart Cassidy','black-jack':'Black Jack','calamity-janet':'Calamity Janet','el-gringo':'El Gringo','jesse-jones':'Jesse Jones',jourdonnais:'Jourdonnais','kit-carlson':'Kit Carlson','lucky-duke':'Lucky Duke','paul-regret':'Paul Regret','pedro-ramirez':'Pedro Ramirez','rose-doolan':'Rose Doolan','sid-ketchum':'Sid Ketchum','slab-the-killer':'Slab the Killer','suzy-lafayette':'Suzy Lafayette','vulture-sam':'Vulture Sam','willy-the-kid':'Willy the Kid'};
 const categories={공격:['bang','gatling','indians','duel'],막기:['missed','barrel'],'회복·뽑기':['beer','saloon','stagecoach','wells-fargo','general-store'],방해:['panic','cat-balou','jail'],'설치(무기·장비)':['colt-45','volcanic','schofield','remington','rev-carabine','winchester','mustang','scope','dynamite'],인물:Object.keys(info).slice(27),역할:['sheriff','deputy','outlaw','renegade']};
 const cardCategories=Object.fromEntries(Object.entries(categories).flatMap(([category,keys])=>keys.map(key=>[key,category])));
 const fullName=key=>(key==='bang'?'뱅! 카드':info[key][0])+'('+englishNames[key]+')';
-const modes=['home','learn','setup','combat','extra','turn','end','play','cards'];
+const modes=['home','learn','setup-types','setup','combat','extra','turn','end','cards'];
 let cards=[],filter='전체',mode='home',count=4,homeSelected=false;
 const nums=()=>({sheriff:1,deputy:count===4?0:count===7?2:1,outlaw:count>=6?3:2,renegade:1});
 const roleNames={sheriff:'보안관',deputy:'부관',outlaw:'무법자',renegade:'배신자'};
@@ -74,16 +62,18 @@ function image(c){
 }
 function place(sel,key){const c=cards.find(c=>c.key===key);if(c&&$(sel))$(sel).replaceChildren(image(c));}
 let cardsReturn={mode:'learn',top:0};
-try{const saved=JSON.parse(sessionStorage.getItem('bang-cards-return'));if(saved&&['learn','setup','turn','combat','extra','end','play'].includes(saved.mode)&&Number.isFinite(saved.top))cardsReturn=saved;}catch{}
+try{const saved=JSON.parse(sessionStorage.getItem('bang-cards-return'));if(saved&&['learn','setup-types','setup','turn','combat','extra','end'].includes(saved.mode)&&Number.isFinite(saved.top))cardsReturn=saved;}catch{}
 $('#cards-return').onclick=()=>{const destination={...cardsReturn};setMode(destination.mode,false);requestAnimationFrame(()=>window.scrollTo({top:destination.top,behavior:'instant'}));};
 function setMode(next,scroll=true,push=true){
+  if(next==='play')next='cards';
   if(!modes.includes(next))next='home';
-  if(next==='cards'&&['learn','setup','turn','combat','extra','end','play'].includes(mode)){cardsReturn={mode,top:window.scrollY};try{sessionStorage.setItem('bang-cards-return',JSON.stringify(cardsReturn));}catch{}}
+  if(next==='cards'&&['learn','setup-types','setup','turn','combat','extra','end'].includes(mode)){cardsReturn={mode,top:window.scrollY};try{sessionStorage.setItem('bang-cards-return',JSON.stringify(cardsReturn));}catch{}}
   const changed=mode!==next;mode=next;const home=next==='home';$('#home').hidden=!home;$('.masthead').hidden=home;$('.mode-nav').hidden=home;$('footer').hidden=home;$$('.view').forEach(v=>v.hidden=v.id!==next);
-  const active=['learn','setup','turn','combat','extra','end'].includes(next)?'learn':next;
+  const active=['learn','setup-types','setup','turn','combat','extra','end'].includes(next)?'learn':next;
   $$('.mode-nav [data-mode]').forEach(b=>{if(b.dataset.mode===active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
   if(push&&changed)history.pushState({mode:next},'','#'+next);
   if(scroll)window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+  updateLessonProgress(next);
   if(next==='cards')renderCards();
 }
 window.addEventListener('popstate',()=>setMode(location.hash.slice(1),false,false));
@@ -105,14 +95,9 @@ function openCard(key){
     const heading=document.createElement('b');heading.textContent='보안관 주요 규칙';
     const list=document.createElement('ul');
     const sheriffRules=[
-      '부관과 같은 팀이에요. 무법자와 배신자가 모두 탈락하면 보안관·부관이 함께 이겨요. 부관이 먼저 탈락했어도 함께 이겨요. 4명 게임에는 부관이 없어요.',
-      '인물 카드에 적힌 생명과 최대 생명보다 각각 1 많아요. 시작 카드도 시작 생명 수만큼 받아요.',
-      '보안관이 탈락하면 게임이 즉시 끝나요. 배신자만 살아 있다면 배신자 승, 그 외에는 무법자 승이에요.',
-      '보안관만 역할 카드를 공개해요. 다른 사람의 역할은 모르는 채 시작해요.',
-      '보안관부터 차례를 시작하고 시계 방향으로 진행해요.',
-      '보안관에게는 감옥 카드를 놓을 수 없어요.',
-      '무법자를 제거하면 카드 3장을 보상으로 뽑아요.',
-      '부관을 직접 제거하면 내 손패와 장착 카드를 모두 버려요.'
+      '보안관만 역할 카드를 공개해요.',
+      '생명을 인물카드에 적힌 것보다 1개 더 받습니다.',
+      '보안관이 탈락하면 게임이 즉시 끝나요.'
     ];
     sheriffRules.forEach((rule,i)=>{const li=document.createElement('li');if(i<3){const strong=document.createElement('strong');strong.textContent=rule;li.append(strong);li.className='essential-rule';}else li.textContent=rule;list.append(li);});
     text.append(heading,list);
@@ -123,17 +108,13 @@ function openCard(key){
   $('#dialog-body').replaceChildren(wrap);$('#card-dialog').setAttribute('aria-labelledby','dialog-title');if(!$('#card-dialog').open)$('#card-dialog').showModal();
 }
 $$('[data-card]').forEach(b=>b.onclick=e=>{e.stopPropagation();openCard(b.dataset.card);});$('#close-dialog').onclick=()=>$('#card-dialog').close();$('#card-dialog').onclick=e=>{if(e.target===$('#card-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}};
-faqs.push(['뱅! 카드를 또 쓰고 싶어요','내 턴에는 뱅! 카드를 1장만 사용해요. 볼캐닉·윌리 더 키드는 예외예요. 기관총·결투·인디언!은 뱅! 카드 한도에 안 세요.','volcanic'],['내 턴을 어떻게 끝내요?','손패를 현재 생명 수 이하가 되도록 버려요. 내 앞에 놓인 카드는 손패 한도에 안 세요.','stagecoach']);
-function withEnglish(text){return text.replace(/웰스 파고 은행|캣 벌로우|빗나감!|인디언!|강탈!|기관총|역마차|잡화점|조준경|야생마|다이너마이트|볼캐닉|주점|술통|맥주|감옥|결투/g,name=>{const key=Object.keys(info).find(k=>info[k][0]===name);return key?fullName(key):name;});}
-for(const [i,[question,answer,key]] of faqs.entries()){const d=document.createElement('details'),s=document.createElement('summary'),list=document.createElement('ul'),b=document.createElement('button');d.id='faq-'+i;s.textContent=question;for(const rule of answer.split(/(?<=요\.|예요\.|거리예요\.|최소 1\.)\s+/)){const li=document.createElement('li');li.textContent=withEnglish(rule);list.append(li);}b.className='text-button';b.textContent='관련 카드 보기 →';b.onclick=()=>openCard(key);d.append(s,list,b);$('#faq').append(d);}
-$$('[data-faq]').forEach(b=>b.onclick=()=>{const d=$('#faq-'+b.dataset.faq);d.open=true;d.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});});
 const normalize=s=>s.toLowerCase().replace(/[^\p{L}\p{N}]/gu,'');
 for(const f of ['전체',...Object.keys(categories)]){const b=document.createElement('button');b.textContent=f;b.setAttribute('aria-pressed',f===filter);b.onclick=()=>{filter=f;$$('#filters button').forEach(x=>x.setAttribute('aria-pressed',x.textContent===f));renderCards();};$('#filters').append(b);}
 function renderCards(){const q=normalize($('#search').value);const list=cards.filter(c=>(filter==='전체'||cardCategories[c.key]===filter)&&(!q||normalize(info[c.key][0]+englishNames[c.key]+c.key+info[c.key][1]+(info[c.key][1].includes('뽑')?'카드 뽑기':'' )).includes(q)));$('#card-grid').replaceChildren();for(const c of list){const b=document.createElement('button'),name=document.createElement('b'),desc=document.createElement('small');b.className='index-card';b.append(image(c));name.textContent=fullName(c.key);desc.textContent=info[c.key][1];b.append(name,desc);b.setAttribute('aria-label',fullName(c.key)+' 설명 보기');b.onclick=()=>openCard(c.key);$('#card-grid').append(b);}$('#card-count').textContent=list.length+'종';$('#no-cards').hidden=list.length>0;}
 $('#search').oninput=renderCards;$('#character-guide-link').onclick=e=>{e.preventDefault();filter='인물';$('#search').value='';$$('#filters button').forEach(b=>b.setAttribute('aria-pressed',b.textContent==='인물'));setMode('cards');};
 let toastTimer;function toast(t){$('#toast').textContent=t;$('#toast').style.display='block';clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').style.display='none',3000);}
 async function init(){try{const res=await fetch('assets/cards.json');if(!res.ok)throw Error();const data=await res.json();if(!Array.isArray(data.cards)||!data.cards.length)throw Error();cards=data.cards.filter(c=>info[c.key]);}catch{cards=Object.keys(info).map(key=>({key,name:info[key][0],group:cardCategories[key]==='역할'?'역할':cardCategories[key]==='인물'?'인물':['colt-45','volcanic','schofield','remington','rev-carabine','winchester'].includes(key)?'무기':['mustang','scope','barrel','jail','dynamite'].includes(key)?'장비':'일반'}));toast('카드 이미지를 불러오지 못해 텍스트로 보여드려요.');}
-  for(const [sel,key] of [['#setup-character','bart-cassidy'],['#setup-character-detail','bart-cassidy'],['#setup-weapon','colt-45'],['#bang-example','bang'],['#missed-example','missed'],['#barrel-example','barrel'],['#gatling-example','gatling'],['#indians-example','indians'],['#duel-example','duel'],['#recovery-beer','beer'],['#recovery-sid','sid-ketchum'],['#recovery-saloon','saloon'],['#range-weapon-example','schofield'],['#brown-card-example','bang'],['#blue-card-example','barrel'],['#basic-stagecoach','stagecoach'],['#basic-wells-fargo','wells-fargo'],['#basic-panic','panic'],['#basic-cat-balou','cat-balou'],['#extra-jail','jail'],['#extra-dynamite','dynamite']])place(sel,key);
+  for(const [sel,key] of [['#setup-character','bart-cassidy'],['#setup-character-detail','bart-cassidy'],['#setup-weapon','colt-45'],['#bang-example','bang'],['#missed-example','missed'],['#barrel-example','barrel'],['#gatling-example','gatling'],['#indians-example','indians'],['#duel-example','duel'],['#recovery-beer','beer'],['#recovery-sid','sid-ketchum'],['#recovery-saloon','saloon'],['#range-weapon-example','schofield'],['#brown-card-example','bang'],['#blue-card-example','barrel'],['#basic-stagecoach','stagecoach'],['#basic-wells-fargo','wells-fargo'],['#basic-panic','panic'],['#basic-cat-balou','cat-balou'],['#extra-jail','jail'],['#extra-dynamite','dynamite'],['#combat-jail','jail'],['#combat-dynamite','dynamite'],['#intro-sheriff','sheriff'],['#intro-bart-cassidy','bart-cassidy'],['#intro-schofield','schofield'],['#intro-bang','bang'],['#intro-barrel','barrel']])place(sel,key);
   $('#roles').replaceChildren();for(const key of ['sheriff','deputy','outlaw','renegade']){const c=cards.find(x=>x.key===key),r=document.createElement('button'),h=document.createElement('h3'),goal=document.createElement('p');r.className='role';r.type='button';r.dataset.role=key;r.onclick=()=>openCard(key);goal.textContent=info[key][1];const picture=image(c);if(picture.classList.contains('card-image'))picture.style.aspectRatio='2 / 3';r.append(picture,h,goal);$('#roles').append(r);}updateRoleCounts();renderCards();}
 try{const n=Number(localStorage.getItem('bang-players'));if(Number.isInteger(n)&&n>=4&&n<=7)count=n;}catch{}
 players(count);setMode(location.hash.slice(1),false,false);init();
@@ -152,3 +133,23 @@ function connectRangeArrow(){
 }
 initRangeArrow();
 function initRangeArrow(){const container=$('#range-weapon-example');if(!container)return;if(container.querySelector('.card-image'))connectRangeArrow();else{const observer=new MutationObserver(()=>{if(container.querySelector('.card-image')){observer.disconnect();connectRangeArrow();}});observer.observe(container,{childList:true});}}
+
+
+function updateLessonProgress(current){
+  const steps=[['learn','역할과 승리조건'],['setup-types','카드 종류'],['setup','기본세팅'],['combat','기본 규칙'],['extra','추가 규칙'],['turn','내 차례'],['end','게임 종료']];
+  const index=steps.findIndex(([id])=>id===current);
+  if(index<0)return;
+  const view=document.getElementById(current);
+  let panel=view.querySelector(':scope > .lesson-progress');
+  if(!panel){panel=document.createElement('div');panel.className='lesson-progress';view.prepend(panel);}
+  panel.replaceChildren();
+  const row=document.createElement('div'),label=document.createElement('b'),remaining=document.createElement('span');
+  label.textContent=(index+1)+' / '+steps.length+'단계 · '+steps[index][1];
+  remaining.textContent=index===steps.length-1?'마지막 설명이에요':(steps.length-index-1)+'단계 더 읽으면 끝나요';
+  row.append(label);
+  const bar=document.createElement('nav');bar.className='lesson-progress-bar';
+  bar.setAttribute('aria-label','설명 단계 선택');
+  steps.forEach(([id,title],i)=>{const segment=document.createElement('button');segment.type='button';segment.textContent=String(i+1);segment.setAttribute('aria-label',(i+1)+'단계 · '+title);segment.title=(i+1)+'단계 · '+title;if(i<=index)segment.className='reached';if(i===index)segment.setAttribute('aria-current','step');segment.onclick=()=>setMode(id);bar.append(segment);});
+  const hint=document.createElement('small');hint.className='progress-hint';hint.textContent='번호를 누르면 해당 설명으로 이동해요.';
+  panel.append(row,bar,hint);
+}
