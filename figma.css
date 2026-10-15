@@ -168,3 +168,6 @@ body{background:#805637 url('assets/user-wood.png') center top/313px 406px repea
 .barrel-condition{margin:14px 0 8px;font-weight:700}.view#combat .survival-summary{padding:12px 0 18px;margin-top:12px}.view#combat .survival-summary>b{font-size:17px;line-height:1.7}.view#combat .casualties .survival-summary p{font-size:15px;line-height:1.9;margin:12px 0 0}
 
 .view#combat .barrel-tip .barrel-condition{font-size:16px;line-height:1.7}.view#combat .weapon-example .range-callout>b{font-size:16px;line-height:1.6}.view#combat .weapon-example>div{padding-top:0}.view#combat .weapon-example .range-callout{margin-top:0;padding-left:0}.view#combat .casualties .removal-rules>div>b,.view#combat .casualties .sheriff-death>b{display:block;color:#191d8f!important;font-size:18px;font-weight:800;line-height:1.6;margin-bottom:10px}
+
+/* Always-visible elimination rewards and numbered deputy rules. */
+.view#combat .casualties .removal-rules{margin:24px 0 0;border-top:1px solid var(--line);padding-top:18px}.view#combat .casualties .removal-rules>h4{font-size:14px;line-height:1.6;margin:0 0 18px}.view#combat .casualties .deputy-rules{padding-left:24px;margin:0;font-size:14px;line-height:1.85}.view#combat .casualties .deputy-rules>li{padding-left:4px;margin-bottom:18px}.view#combat .casualties .deputy-rules>li::marker{font-weight:800}
