@@ -71,3 +71,100 @@ body{background:#805637 url('assets/user-wood.png') center top/313px 406px repea
 .weapon-example .range-pointer{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;color:var(--red);z-index:1}.weapon-example .range-callout{left:0;width:100%;padding-left:8px}
 
 .use-timing{display:block;font-family:inherit;font-size:11px;font-weight:700;line-height:1.6;color:var(--red);padding:6px 0;margin:0 0 8px;text-align:left;word-break:keep-all}.shootout .use-timing{font-size:10px;text-align:center;min-height:40px}.weapon-example>.visual-card>.use-timing{font-size:10px}.learning-divider>.primary{width:100%;margin:18px 0;font-size:15px}.decision-branches{display:grid;gap:24px}.decision-branch{min-width:0}.branch-label{margin:18px 0 10px;font-size:14px;font-weight:800;color:var(--red)}.decision-fork{display:block;width:100%;height:44px;color:var(--red)}.decision-results{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}.decision-results>div{text-align:center}.decision-results span{display:block;font-size:12px;margin:0 0 8px}.decision-results strong{display:flex;justify-content:center;align-items:center;min-height:64px;padding:10px 5px;border:1.5px solid var(--red);color:var(--red);font-size:16px;background:#ead0a8;line-height:1.6}.decision-branch .flow-question{font-size:16px}.decision-results strong{word-break:keep-all}@media(max-width:350px){.decision-results strong{font-size:14px}.decision-branch .flow-question{font-size:14px}}
+
+.view#combat .attack-row .ability-headline{display:block;font-size:19px;font-weight:800;line-height:1.6;margin-bottom:10px}
+
+.barrel-subsection{border-top:1px solid var(--line);margin-top:26px;padding-top:26px}.view#combat .barrel-subsection>h3{font-family:'KoPub Batang',serif;font-size:24px;font-weight:700;line-height:1.4;letter-spacing:-.8px;color:#21170f;margin:0 0 18px}.barrel-subsection .barrel-tip{padding-top:0;border-top:0;margin-bottom:0;padding-bottom:0;border-bottom:0}.view#combat .casualties>.lesson-kicker{color:var(--red)!important}.view#combat .casualties .survival-card{margin-top:18px;border:0;padding:16px 0}.view#combat .casualties .survival-card>div>b{font-size:17px;line-height:1.7}.view#combat .casualties .survival-card p{font-size:15px;line-height:1.9;margin-top:10px}.elimination-result{border-top:1px solid var(--line);padding:20px 0 4px;margin-top:10px}.elimination-result>b{font-size:17px}.view#combat .casualties .elimination-result p{font-size:15px;line-height:1.9;margin:10px 0}.view#combat .casualties .inline-more{margin:18px 0}
+
+/* Additional rules share the existing card presentation. */
+
+.view#extra,.view#end{margin:20px 14px;padding:26px 20px}
+.view#extra,.view#end{margin:20px 10px;padding:22px 14px}
+.view#extra .border-guide{grid-template-columns:1fr;gap:18px}
+.view#extra .border-guide p{font-size:14px;line-height:1.8}
+
+
+/* Separate each main topic; keep card explanations beside their images. */
+.view#extra{background:transparent;border:0;box-shadow:none;padding:0;margin:20px 14px}
+.view#extra .combat-panel{display:block;background:#ead5adf5;border:1.5px solid #523520;box-shadow:3px 4px 8px #22140b33;margin:0 0 22px;padding:24px 20px}
+.view#extra .combat-panel>h3{margin-top:0}
+.view#extra .attack-row{display:grid;grid-template-columns:80px minmax(0,1fr);align-items:start;gap:16px;margin:0;padding:22px 0}
+.view#extra .attack-row>.visual-card{width:80px;margin:0}
+.view#extra .attack-row>div{min-width:0}
+.view#extra .range-table-image{display:block;width:100%;max-width:320px;height:auto;margin:20px auto}
+.view#extra .border-guide{display:grid;grid-template-columns:1fr;gap:20px}
+.view#extra .page-navigation{padding:0 6px}
+.view#extra{margin:20px 10px}
+.view#extra .combat-panel{padding:22px 14px}
+.view#extra .attack-row{grid-template-columns:66px minmax(0,1fr);gap:12px}
+.view#extra .attack-row>.visual-card{width:66px}
+
+
+.view#extra .recovery-row{border-bottom:0;padding:16px 0}
+.view#extra .combat-panel{padding:24px 20px}
+.view#extra .extra-rules{padding:18px 20px}
+.view#extra .life-zero>p{font-size:15px}
+.view#extra .removal-rules>div{padding:12px 0;border:0}
+.view#extra .removal-rules p{line-height:1.85;font-size:14px}
+.view#extra .casualties .end-rules{margin-top:0}
+.view#extra .sheriff-death{font-size:14px;padding-top:16px}
+.view#extra .combat-panel{padding:22px 14px}
+
+
+.view#extra>.lesson-nav{background:#ead5adf5;padding:4px 12px;border:1px solid #523520}
+
+
+.view#extra .weapon-example{border:0;padding:8px 0 16px}
+.view#extra .border-example{display:block;width:95px;max-width:100%;padding:0;margin:0 0 14px;background:transparent;color:var(--ink)}
+
+
+.view#extra .weapon-example{position:relative;align-items:stretch}
+.view#extra .combat-panel>.barrel-tip{border-top:0;padding-top:0;margin-top:16px}
+.view#extra .combat-panel>.recovery-row{border-bottom:0}
+
+
+.view#extra .weapon-example{grid-template-columns:110px minmax(0,1fr);gap:20px;align-items:start}
+.view#extra .weapon-example>.visual-card{width:110px}
+.view#extra .weapon-example{grid-template-columns:100px minmax(0,1fr);gap:12px}
+.view#extra .weapon-example>.visual-card{width:100px}
+
+
+/* Combat topic headings share the first section's editorial title style. */
+.view#extra .combat-panel>.section-head>h2,.view#extra .combat-panel>h3,.view#extra details.combat-panel>summary,.view#extra .learning-divider>h3{font-family:'KoPub Batang',serif;font-size:24px;font-weight:700;line-height:1.4;letter-spacing:-.8px;color:var(--red);text-wrap:balance}
+.view#extra details.combat-panel>summary>span{font:inherit;color:inherit}
+.view#extra .combat-panel>.lesson-kicker,.view#extra .section-head>.lesson-kicker{color:var(--red)}
+.view#extra .learning-divider{background:#ead5adf5;padding:20px;margin-bottom:22px}
+.view#extra .learning-divider>p{color:var(--muted)}
+
+
+.view#extra .casualties,.view#extra .casualties *{color:#21170f!important}
+.view#extra .casualties .end-rules>div{border:0;padding-top:0}
+.view#extra .casualties .survival-steps p{font-size:15px;line-height:1.85;margin:10px 0 0}
+.view#extra .casualties .inline-more{margin-top:18px}
+.view#extra .casualties .sheriff-death p{font-size:15px;line-height:1.85}
+
+
+.view#extra .combat-panel>.section-head>h2,.view#extra .combat-panel>h3,.view#extra details.combat-panel>summary,.view#extra details.combat-panel>summary>span,.view#extra .learning-divider>h3{color:#21170f}
+
+
+.view#extra .attack-row .ability-headline{display:block;font-size:19px;font-weight:800;line-height:1.6;margin-bottom:10px}
+.view#extra .barrel-subsection>h3{font-family:'KoPub Batang',serif;font-size:24px;font-weight:700;line-height:1.4;letter-spacing:-.8px;color:#21170f;margin:0 0 18px}
+.view#extra .casualties>.lesson-kicker{color:var(--red)!important}
+.view#extra .casualties .survival-card{margin-top:18px;border:0;padding:16px 0}
+.view#extra .casualties .survival-card>div>b{font-size:17px;line-height:1.7}
+.view#extra .casualties .survival-card p{font-size:15px;line-height:1.9;margin-top:10px}
+.view#extra .casualties .elimination-result p{font-size:15px;line-height:1.9;margin:10px 0}
+.view#extra .casualties .inline-more{margin:18px 0}
+.view#extra>.section-head{padding:24px 20px;background:#ead5adf5;border:1.5px solid #523520;margin-bottom:22px}.view#extra>.section-head h2{font-family:'KoPub Batang',serif;font-size:24px;color:var(--ink)}.view#extra .extra-rules{padding:18px 20px}.view#extra .extra-rules>summary{font-family:'KoPub Batang',serif;font-size:24px;color:var(--ink)}.view#turn{background:transparent;border:0;box-shadow:none;padding:0;margin:20px 14px}.view#turn>.lesson-nav{background:#ead5adf5;padding:4px 10px;border:1px solid #523520}.view#turn>.turn-section,.view#turn>.turn-rules-panel{background:#ead5adf5;border:1.5px solid #523520;box-shadow:3px 4px 8px #22140b33;padding:24px 20px;margin:0 0 22px}.view#turn>.turn-section{padding:24px 20px!important}.view#turn .rule-strip{border:0;margin:0 0 20px;padding:0}.rule-strip h3{font-family:'KoPub Batang',serif;font-size:22px;margin-bottom:20px}.turn-limits{margin:0}.turn-limits>div{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;padding:14px 0;border-top:1px solid var(--line);font-size:14px;line-height:1.7}.turn-limits dt{font-weight:700}.turn-limits dd{margin:0;text-align:right}.turn-limits strong{font-size:19px;color:var(--red)}.lesson-nav button{font-size:11px}@media(max-width:350px){.view#turn{margin:20px 10px}.view#turn>.turn-section,.view#turn>.turn-rules-panel{padding:22px 14px!important}.lesson-nav button{font-size:10px}}
+
+#roles .role h3{font-weight:900}
+
+
+.view#extra>details.combat-panel.extra-rules:not([open]){padding:12px 20px;margin-bottom:12px}.view#extra>details.combat-panel.extra-rules:not([open])>summary{font-size:21px;min-height:44px;line-height:1.4}.view#extra>details.combat-panel.extra-rules:not([open])>summary small{margin-top:3px;line-height:1.5}
+
+
+#learn .role-heading h2{color:#351e0f;font-size:35px;line-height:1.3;letter-spacing:-1.2px;text-wrap:balance}#learn>p{font-size:13px}#roles .role h3{font-size:18px;font-weight:900;line-height:1.5;min-height:0;margin:8px 0 4px}#roles .role p{margin:0;font-size:13px;line-height:1.6}#roles .role{gap:0}#roles.role-grid{row-gap:20px}#learn .player-picker{margin:18px 0}.setup-character-example{display:grid;grid-template-columns:96px minmax(0,1fr);gap:16px;margin-top:16px;align-items:start}.setup-character-example>.visual-card{position:relative;width:96px;padding:0;background:none}.setup-character-example>div{font-size:14px;line-height:1.8}.setup-character-example p{font-size:13px;margin:10px 0}.setup-list .life-label{font-size:16px;color:var(--red)}.character-life-highlight{position:absolute;right:3%;top:9%;width:18%;height:28%;border:2px solid var(--red);border-radius:8px;pointer-events:none}.setup-example-title{margin:30px 0 18px;font-family:'KoPub Batang',serif;font-size:21px}.setup-character-example #character-guide-link{font-size:13px;margin-top:0}.setup-list li>span>strong{font-weight:900;color:var(--ink)}@media(max-width:350px){#learn .role-heading h2{font-size:30px}#roles .role h3{font-size:18px}.setup-character-example{grid-template-columns:80px minmax(0,1fr);gap:12px}.setup-character-example>.visual-card{width:80px}}
+
+.barrel-condition{margin:14px 0 8px;font-weight:700}.view#combat .survival-summary{padding:12px 0 18px;margin-top:12px}.view#combat .survival-summary>b{font-size:17px;line-height:1.7}.view#combat .casualties .survival-summary p{font-size:15px;line-height:1.9;margin:12px 0 0}
+
+.view#combat .barrel-tip .barrel-condition{font-size:16px;line-height:1.7}.view#combat .weapon-example .range-callout>b{font-size:16px;line-height:1.6}.view#combat .weapon-example>div{padding-top:0}.view#combat .weapon-example .range-callout{margin-top:0;padding-left:0}.view#combat .casualties .removal-rules>div>b,.view#combat .casualties .sheriff-death>b{display:block;color:#191d8f!important;font-size:18px;font-weight:800;line-height:1.6;margin-bottom:10px}

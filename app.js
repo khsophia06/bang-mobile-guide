@@ -63,7 +63,7 @@ const englishNames={sheriff:'Sheriff',deputy:'Deputy',outlaw:'Outlaw',renegade:'
 const categories={공격:['bang','gatling','indians','duel'],막기:['missed','barrel'],'회복·뽑기':['beer','saloon','stagecoach','wells-fargo','general-store'],방해:['panic','cat-balou','jail'],'설치(무기·장비)':['colt-45','volcanic','schofield','remington','rev-carabine','winchester','mustang','scope','dynamite'],인물:Object.keys(info).slice(27),역할:['sheriff','deputy','outlaw','renegade']};
 const cardCategories=Object.fromEntries(Object.entries(categories).flatMap(([category,keys])=>keys.map(key=>[key,category])));
 const fullName=key=>(key==='bang'?'뱅! 카드':info[key][0])+'('+englishNames[key]+')';
-const modes=['home','learn','setup','combat','turn','end','play','cards'];
+const modes=['home','learn','setup','combat','extra','turn','end','play','cards'];
 let cards=[],filter='전체',mode='home',count=4,homeSelected=false;
 const nums=()=>({sheriff:1,deputy:count===4?0:count===7?2:1,outlaw:count>=6?3:2,renegade:1});
 const roleNames={sheriff:'보안관',deputy:'부관',outlaw:'무법자',renegade:'배신자'};
@@ -74,13 +74,13 @@ function image(c){
 }
 function place(sel,key){const c=cards.find(c=>c.key===key);if(c&&$(sel))$(sel).replaceChildren(image(c));}
 let cardsReturn={mode:'learn',top:0};
-try{const saved=JSON.parse(sessionStorage.getItem('bang-cards-return'));if(saved&&['learn','setup','turn','combat','end','play'].includes(saved.mode)&&Number.isFinite(saved.top))cardsReturn=saved;}catch{}
+try{const saved=JSON.parse(sessionStorage.getItem('bang-cards-return'));if(saved&&['learn','setup','turn','combat','extra','end','play'].includes(saved.mode)&&Number.isFinite(saved.top))cardsReturn=saved;}catch{}
 $('#cards-return').onclick=()=>{const destination={...cardsReturn};setMode(destination.mode,false);requestAnimationFrame(()=>window.scrollTo({top:destination.top,behavior:'instant'}));};
 function setMode(next,scroll=true,push=true){
   if(!modes.includes(next))next='home';
-  if(next==='cards'&&['learn','setup','turn','combat','end','play'].includes(mode)){cardsReturn={mode,top:window.scrollY};try{sessionStorage.setItem('bang-cards-return',JSON.stringify(cardsReturn));}catch{}}
+  if(next==='cards'&&['learn','setup','turn','combat','extra','end','play'].includes(mode)){cardsReturn={mode,top:window.scrollY};try{sessionStorage.setItem('bang-cards-return',JSON.stringify(cardsReturn));}catch{}}
   const changed=mode!==next;mode=next;const home=next==='home';$('#home').hidden=!home;$('.masthead').hidden=home;$('.mode-nav').hidden=home;$('footer').hidden=home;$$('.view').forEach(v=>v.hidden=v.id!==next);
-  const active=['learn','setup','turn','combat','end'].includes(next)?'learn':next;
+  const active=['learn','setup','turn','combat','extra','end'].includes(next)?'learn':next;
   $$('.mode-nav [data-mode]').forEach(b=>{if(b.dataset.mode===active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
   if(push&&changed)history.pushState({mode:next},'','#'+next);
   if(scroll)window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
@@ -118,7 +118,7 @@ function openCard(key){
     text.append(heading,list);
   }else{text.textContent=d[2]+(d[3]?' '+d[3]:'');}
   note.className='dialog-note';note.textContent=d[3];
-  if(isRole)wrap.append(label,h,pic,brief,text);else{const when=document.createElement('p');when.className='use-timing';when.textContent=c.group==='인물'?'인물 능력 · 카드 설명의 조건에 따라 적용':['volcanic','schofield','remington','rev-carabine','winchester','mustang','scope','barrel','jail','dynamite'].includes(key)?'내 차례에 앞에 놓기':key==='missed'?'뱅!·기관총 공격을 받을 때':key==='beer'?'내 차례 또는 생명 0 이하 직후':'내 차례에 사용';wrap.append(brief,pic,label,h,when,text);}
+  if(isRole)wrap.append(label,h,pic,brief,text);else wrap.append(brief,pic,label,h,text);
 
   $('#dialog-body').replaceChildren(wrap);$('#card-dialog').setAttribute('aria-labelledby','dialog-title');if(!$('#card-dialog').open)$('#card-dialog').showModal();
 }
@@ -135,7 +135,7 @@ function renderCards(){const q=normalize($('#search').value);const list=cards.fi
 $('#search').oninput=renderCards;$('#character-guide-link').onclick=e=>{e.preventDefault();filter='인물';$('#search').value='';$$('#filters button').forEach(b=>b.setAttribute('aria-pressed',b.textContent==='인물'));setMode('cards');};
 let toastTimer;function toast(t){$('#toast').textContent=t;$('#toast').style.display='block';clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').style.display='none',3000);}
 async function init(){try{const res=await fetch('assets/cards.json');if(!res.ok)throw Error();const data=await res.json();if(!Array.isArray(data.cards)||!data.cards.length)throw Error();cards=data.cards.filter(c=>info[c.key]);}catch{cards=Object.keys(info).map(key=>({key,name:info[key][0],group:cardCategories[key]==='역할'?'역할':cardCategories[key]==='인물'?'인물':['colt-45','volcanic','schofield','remington','rev-carabine','winchester'].includes(key)?'무기':['mustang','scope','barrel','jail','dynamite'].includes(key)?'장비':'일반'}));toast('카드 이미지를 불러오지 못해 텍스트로 보여드려요.');}
-  for(const [sel,key] of [['#setup-character','bart-cassidy'],['#setup-weapon','colt-45'],['#bang-example','bang'],['#missed-example','missed'],['#barrel-example','barrel'],['#gatling-example','gatling'],['#indians-example','indians'],['#duel-example','duel'],['#recovery-beer','beer'],['#recovery-sid','sid-ketchum'],['#recovery-saloon','saloon'],['#range-weapon-example','schofield'],['#brown-card-example','bang'],['#blue-card-example','barrel'],['#basic-stagecoach','stagecoach'],['#basic-wells-fargo','wells-fargo'],['#basic-panic','panic'],['#basic-cat-balou','cat-balou']])place(sel,key);
+  for(const [sel,key] of [['#setup-character','bart-cassidy'],['#setup-character-detail','bart-cassidy'],['#setup-weapon','colt-45'],['#bang-example','bang'],['#missed-example','missed'],['#barrel-example','barrel'],['#gatling-example','gatling'],['#indians-example','indians'],['#duel-example','duel'],['#recovery-beer','beer'],['#recovery-sid','sid-ketchum'],['#recovery-saloon','saloon'],['#range-weapon-example','schofield'],['#brown-card-example','bang'],['#blue-card-example','barrel'],['#basic-stagecoach','stagecoach'],['#basic-wells-fargo','wells-fargo'],['#basic-panic','panic'],['#basic-cat-balou','cat-balou']])place(sel,key);
   $('#roles').replaceChildren();for(const key of ['sheriff','deputy','outlaw','renegade']){const c=cards.find(x=>x.key===key),r=document.createElement('button'),h=document.createElement('h3'),goal=document.createElement('p');r.className='role';r.type='button';r.dataset.role=key;r.onclick=()=>openCard(key);goal.textContent=info[key][1];const picture=image(c);if(picture.classList.contains('card-image'))picture.style.aspectRatio='2 / 3';r.append(picture,h,goal);$('#roles').append(r);}updateRoleCounts();renderCards();}
 try{const n=Number(localStorage.getItem('bang-players'));if(Number.isInteger(n)&&n>=4&&n<=7)count=n;}catch{}
 players(count);setMode(location.hash.slice(1),false,false);init();
