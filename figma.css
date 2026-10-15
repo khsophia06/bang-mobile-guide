@@ -225,3 +225,5 @@ body{background:#805637 url('assets/user-wood.png') center top/313px 406px repea
 
 #completion-dialog{text-align:center;max-width:460px;border:4px double #8b6135;padding:22px 24px 30px;background:#ead5ad}
 #completion-dialog .completion-star{font-size:52px;line-height:1.2;color:#9c3024;margin:12px 0}.completion-eyebrow{font-size:12px;letter-spacing:2px;font-weight:800;color:#74502e}#completion-dialog h2{font-size:28px;line-height:1.45;font-weight:900;color:#351e0f;margin:12px 0}#completion-dialog .completion-cheer{font-size:21px;font-weight:900;color:#9c3024;margin:12px 0}#completion-dialog p{font-size:14px;line-height:1.85}.completion-actions{display:grid;gap:10px;margin-top:24px}.completion-actions button{width:100%;min-height:46px;font-size:14px}.completion-actions .secondary{background:#f1dfbc;color:#351e0f;border:1px solid #967344}@media(prefers-reduced-motion:no-preference){#completion-dialog[open]{animation:completion-in .25s ease-out}@keyframes completion-in{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}}
+
+.setup-reference-card img{border:0;background:transparent;max-width:582px;margin-inline:auto}
