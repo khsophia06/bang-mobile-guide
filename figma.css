@@ -171,3 +171,5 @@ body{background:#805637 url('assets/user-wood.png') center top/313px 406px repea
 
 /* Always-visible elimination rewards and numbered deputy rules. */
 .view#combat .casualties .removal-rules{margin:24px 0 0;border-top:1px solid var(--line);padding-top:18px}.view#combat .casualties .removal-rules>h4{font-size:14px;line-height:1.6;margin:0 0 18px}.view#combat .casualties .deputy-rules{padding-left:24px;margin:0;font-size:14px;line-height:1.85}.view#combat .casualties .deputy-rules>li{padding-left:4px;margin-bottom:18px}.view#combat .casualties .deputy-rules>li::marker{font-weight:800}
+
+.view#extra .judgment-rules ol{padding-left:22px;margin:12px 0;font-size:14px;line-height:1.85}.view#extra .judgment-rules li{margin:0 0 12px;padding-left:2px}
