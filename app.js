@@ -153,3 +153,15 @@ function updateLessonProgress(current){
   const hint=document.createElement('small');hint.className='progress-hint';hint.textContent='번호를 누르면 해당 설명으로 이동해요.';
   panel.append(row,bar,hint);
 }
+
+// Celebrate only after the final page has been read to its closing message.
+const completionDialog=document.getElementById('completion-dialog');
+let completionShown=false;
+try{completionShown=sessionStorage.getItem('bang-completion-shown')==='yes';}catch{}
+function closeCompletion(){completionDialog.close();}
+document.getElementById('completion-close').onclick=closeCompletion;
+document.getElementById('completion-enjoy').onclick=closeCompletion;
+document.getElementById('completion-cards').onclick=()=>{closeCompletion();setMode('cards');};
+completionDialog.addEventListener('click',e=>{if(e.target===completionDialog){const r=completionDialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeCompletion();}});
+const completionObserver=new IntersectionObserver(entries=>{if(completionShown||mode!=='end'||document.querySelector('dialog[open]'))return;if(entries.some(e=>e.isIntersecting&&e.intersectionRatio>=.6)){completionShown=true;try{sessionStorage.setItem('bang-completion-shown','yes');}catch{}completionDialog.showModal();completionObserver.disconnect();}},{threshold:[.6]});
+completionObserver.observe(document.querySelector('#end .lesson-complete'));
