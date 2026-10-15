@@ -173,3 +173,18 @@ body{background:#805637 url('assets/user-wood.png') center top/313px 406px repea
 .view#combat .casualties .removal-rules{margin:24px 0 0;border-top:1px solid var(--line);padding-top:18px}.view#combat .casualties .removal-rules>h4{font-size:14px;line-height:1.6;margin:0 0 18px}.view#combat .casualties .deputy-rules{padding-left:24px;margin:0;font-size:14px;line-height:1.85}.view#combat .casualties .deputy-rules>li{padding-left:4px;margin-bottom:18px}.view#combat .casualties .deputy-rules>li::marker{font-weight:800}
 
 .view#extra .judgment-rules ol{padding-left:22px;margin:12px 0;font-size:14px;line-height:1.85}.view#extra .judgment-rules li{margin:0 0 12px;padding-left:2px}
+
+/* Shared lesson frame, compact extra-rule controls, and clear ending conditions. */
+.view .page-navigation>.secondary{background:#ead5ad;color:#21170f;border:1px solid #523520}
+.view#extra>details.combat-panel.extra-rules{padding:12px 16px;margin-bottom:12px}
+.view#extra>details.combat-panel.extra-rules>summary,.view#extra>details.combat-panel.extra-rules:not([open])>summary{font-size:18px;line-height:1.4;min-height:44px}
+.view#extra>details.combat-panel.extra-rules>summary small{font-size:12px;margin-top:3px;line-height:1.5}
+.view#combat .casualties .removal-rules{margin-top:12px;padding-top:0;border-top:0}
+.view#end{background:transparent;border:0;box-shadow:none;padding:0;margin:20px 14px}
+.view#end>.lesson-nav{background:#ead5adf5;padding:4px 10px;border:1px solid #523520}
+.view#end>.ending-panel{background:#ead5adf5;border:1.5px solid #523520;box-shadow:3px 4px 8px #22140b33;padding:24px 20px;margin:0 0 22px}
+.ending-outcomes>article{display:grid;grid-template-columns:30px minmax(0,1fr);gap:12px;padding:22px 0;border-top:1px solid var(--line)}
+.ending-outcomes>article>span{font-size:20px;font-weight:800;color:var(--red);line-height:1.6}
+.ending-outcomes h3{font-size:19px;line-height:1.6;color:#191d8f;margin:0 0 8px}
+.ending-outcomes p{font-size:15px;line-height:1.85;margin:0}.ending-panel .continue-note{font-size:15px;line-height:1.85;border-top:1px solid var(--line);padding-top:18px}
+@media(max-width:350px){.view#end{margin:20px 10px}.view#end>.ending-panel{padding:22px 14px}.view#extra>details.combat-panel.extra-rules{padding:10px 14px}}
