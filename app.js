@@ -51,7 +51,7 @@ const englishNames={sheriff:'Sheriff',deputy:'Deputy',outlaw:'Outlaw',renegade:'
 const categories={공격:['bang','gatling','indians','duel'],막기:['missed','barrel'],'회복·뽑기':['beer','saloon','stagecoach','wells-fargo','general-store'],방해:['panic','cat-balou','jail'],'설치(무기·장비)':['colt-45','volcanic','schofield','remington','rev-carabine','winchester','mustang','scope','dynamite'],인물:Object.keys(info).slice(27),역할:['sheriff','deputy','outlaw','renegade']};
 const cardCategories=Object.fromEntries(Object.entries(categories).flatMap(([category,keys])=>keys.map(key=>[key,category])));
 const fullName=key=>(key==='bang'?'뱅! 카드':info[key][0])+'('+englishNames[key]+')';
-const modes=['home','learn','setup-types','setup','combat','extra','turn','end','cards'];
+const modes=['home','intro','intro-identity','learn','setup-types','setup','turn','combat','extra','end','cards'];
 let cards=[],filter='전체',mode='home',count=4,homeSelected=false;
 const nums=()=>({sheriff:1,deputy:count===4?0:count===7?2:1,outlaw:count>=6?3:2,renegade:1});
 const roleNames={sheriff:'보안관',deputy:'부관',outlaw:'무법자',renegade:'배신자'};
@@ -68,18 +68,25 @@ function setMode(next,scroll=true,push=true){
   if(next==='play')next='cards';
   if(!modes.includes(next))next='home';
   if(next==='cards'&&['learn','setup-types','setup','turn','combat','extra','end'].includes(mode)){cardsReturn={mode,top:window.scrollY};try{sessionStorage.setItem('bang-cards-return',JSON.stringify(cardsReturn));}catch{}}
-  const changed=mode!==next;mode=next;const home=next==='home';$('#home').hidden=!home;$('.masthead').hidden=home;$('.mode-nav').hidden=home;$('footer').hidden=home;$$('.view').forEach(v=>v.hidden=v.id!==next);
+  const changed=mode!==next;mode=next;const home=next==='home';const introduction=next==='intro'||next==='intro-identity';document.body.classList.toggle('intro-active',introduction);$('#home').hidden=!home;$('.masthead').hidden=home;$('.mode-nav').hidden=home||introduction;$('footer').hidden=home||introduction;$$('.view').forEach(v=>v.hidden=v.id!==next);
   const active=['learn','setup-types','setup','turn','combat','extra','end'].includes(next)?'learn':next;
   $$('.mode-nav [data-mode]').forEach(b=>{if(b.dataset.mode===active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
   if(push&&changed)history.pushState({mode:next},'','#'+next);
   if(scroll)window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
   updateLessonProgress(next);
+  if(changed){const target=document.getElementById(next);if(target){target.classList.remove('scene-enter');void target.offsetWidth;target.classList.add('scene-enter');}if(introduction){window.scrollTo({top:0,behavior:'instant'});document.getElementById(next==='intro'?'intro-title':'intro-identity').focus({preventScroll:true});}}
+  if(changed&&next!=='learn')roleIntroController?.abort();
+  if(changed&&next!=='setup')setupDealController?.abort();
+  if(changed&&next==='learn'&&document.querySelectorAll('#roles .role').length===4)playRoleIntro();
+  if(changed&&next==='setup-types')showCardType(0,false);
+  if(changed&&next==='setup')showSetupStep(0);
+  if(changed&&lessonPresentationsReady&&['setup-types','setup'].includes(next))openLessonPresentation(next);
   if(next==='cards')renderCards();
 }
 window.addEventListener('popstate',()=>setMode(location.hash.slice(1),false,false));
 window.addEventListener('hashchange',()=>setMode(location.hash.slice(1),false,false));
-$$('[data-mode]').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));$$('[data-jump]').forEach(b=>b.onclick=()=>setMode(b.dataset.jump));$('.brand').onclick=e=>{e.preventDefault();setMode('home');};$('#home-back').onclick=()=>setMode('home');$('#start').onclick=()=>setMode('learn');
-function updateRoleCounts(){const n=nums();$$('#roles .role').forEach(r=>{const key=r.dataset.role;r.querySelector('h3').textContent=roleNames[key]+' ('+n[key]+'명)';});$('#setup-role-count').textContent='인원에 맞는 역할 카드만 골라 섞어서 한 장씩 나눠요.';}
+$$('[data-mode]').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));$$('[data-jump]').forEach(b=>b.onclick=()=>setMode(b.dataset.jump));$('.brand').onclick=e=>{e.preventDefault();setMode('home');};$('#home-back').onclick=()=>setMode('home');$('#start').onclick=()=>setMode('intro');
+function updateRoleCounts(){renderWholeSetup();if(document.getElementById('setup-film-seats'))renderSetupFilm();const n=nums();$$('#roles .role').forEach(r=>{const key=r.dataset.role;r.querySelector('h3').textContent=roleNames[key]+' ('+n[key]+'명)';});$('#setup-role-count').textContent='인원에 맞는 역할 카드만 골라 섞어서 한 장씩 나눠요.';}
 function players(n,reveal=false,focusId=null){count=n;if(reveal)homeSelected=true;try{localStorage.setItem('bang-players',n);}catch{}for(const id of ['players','home-players']){$('#'+id).replaceChildren();for(let i=4;i<=7;i++){const b=document.createElement('button');b.textContent=i+'명';b.dataset.players=i;b.setAttribute('aria-pressed',i===n&&(id==='players'||homeSelected));b.onclick=()=>players(i,id==='home-players',id);$('#'+id).append(b);}}
   updateRoleCounts();$('#home-composition').replaceChildren();Object.entries(nums()).forEach(([key,n],i)=>{const s=document.createElement('span');s.textContent=roleNames[key]+' '+n+'명';$('#home-composition').append(s);});$('#home-summary').hidden=!homeSelected;$('#home-summary').style.setProperty('--pointer',((n-4)*26+7)+'%');if(focusId)$('#'+focusId+' [data-players="'+n+'"]').focus();
 }
@@ -115,7 +122,7 @@ $('#search').oninput=renderCards;$('#character-guide-link').onclick=e=>{e.preven
 let toastTimer;function toast(t){$('#toast').textContent=t;$('#toast').style.display='block';clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').style.display='none',3000);}
 async function init(){try{const res=await fetch('assets/cards.json');if(!res.ok)throw Error();const data=await res.json();if(!Array.isArray(data.cards)||!data.cards.length)throw Error();cards=data.cards.filter(c=>info[c.key]);}catch{cards=Object.keys(info).map(key=>({key,name:info[key][0],group:cardCategories[key]==='역할'?'역할':cardCategories[key]==='인물'?'인물':['colt-45','volcanic','schofield','remington','rev-carabine','winchester'].includes(key)?'무기':['mustang','scope','barrel','jail','dynamite'].includes(key)?'장비':'일반'}));toast('카드 이미지를 불러오지 못해 텍스트로 보여드려요.');}
   for(const [sel,key] of [['#setup-character','bart-cassidy'],['#setup-character-detail','bart-cassidy'],['#setup-weapon','colt-45'],['#bang-example','bang'],['#missed-example','missed'],['#barrel-example','barrel'],['#gatling-example','gatling'],['#indians-example','indians'],['#duel-example','duel'],['#recovery-beer','beer'],['#recovery-sid','sid-ketchum'],['#recovery-saloon','saloon'],['#range-weapon-example','schofield'],['#brown-card-example','bang'],['#blue-card-example','barrel'],['#basic-stagecoach','stagecoach'],['#basic-wells-fargo','wells-fargo'],['#basic-panic','panic'],['#basic-cat-balou','cat-balou'],['#extra-jail','jail'],['#extra-dynamite','dynamite'],['#combat-jail','jail'],['#combat-dynamite','dynamite'],['#intro-sheriff','sheriff'],['#intro-bart-cassidy','bart-cassidy'],['#intro-schofield','schofield'],['#intro-bang','bang'],['#intro-barrel','barrel']])place(sel,key);
-  $('#roles').replaceChildren();for(const key of ['sheriff','deputy','outlaw','renegade']){const c=cards.find(x=>x.key===key),r=document.createElement('button'),h=document.createElement('h3'),goal=document.createElement('p');r.className='role';r.type='button';r.dataset.role=key;r.onclick=()=>openCard(key);goal.textContent=info[key][1];const picture=image(c);if(picture.classList.contains('card-image'))picture.style.aspectRatio='2 / 3';r.append(picture,h,goal);$('#roles').append(r);}updateRoleCounts();renderCards();}
+  $('#roles').replaceChildren();for(const key of ['sheriff','deputy','outlaw','renegade']){const c=cards.find(x=>x.key===key),r=document.createElement('button'),h=document.createElement('h3'),goal=document.createElement('p');r.className='role';r.type='button';r.dataset.role=key;r.onclick=()=>openCard(key);goal.textContent=info[key][1];const picture=image(c);if(picture.classList.contains('card-image'))picture.style.aspectRatio='2 / 3';const frame=document.createElement('span'),rotor=document.createElement('span'),back=document.createElement('span');frame.className='role-flip';rotor.className='role-flip-rotor';back.className='role-flip-back';back.setAttribute('aria-hidden','true');back.textContent='★';rotor.append(back,picture);frame.append(rotor);r.append(frame,h,goal);$('#roles').append(r);}updateRoleCounts();initRoleFlips();initCardTypes();initSetupFilm();initLessonPresentations();renderCards();}
 try{const n=Number(localStorage.getItem('bang-players'));if(Number.isInteger(n)&&n>=4&&n<=7)count=n;}catch{}
 players(count);setMode(location.hash.slice(1),false,false);init();
 
@@ -136,7 +143,9 @@ function initRangeArrow(){const container=$('#range-weapon-example');if(!contain
 
 
 function updateLessonProgress(current){
-  const steps=[['learn','역할과 승리조건'],['setup-types','카드 종류'],['setup','기본세팅'],['combat','기본 규칙'],['extra','추가 규칙'],['turn','내 차례'],['end','게임 종료']];
+  if(current==='setup-types'||current==='setup')return;
+  if(current==='learn'){document.querySelector('#learn > .lesson-progress')?.remove();return;}
+  const steps=[['learn','역할과 승리조건'],['setup-types','카드 종류'],['setup','기본세팅'],['turn','내 차례'],['combat','기본 규칙'],['extra','추가 규칙'],['end','게임 종료']];
   const index=steps.findIndex(([id])=>id===current);
   if(index<0)return;
   const view=document.getElementById(current);
@@ -165,3 +174,273 @@ document.getElementById('completion-cards').onclick=()=>{closeCompletion();setMo
 completionDialog.addEventListener('click',e=>{if(e.target===completionDialog){const r=completionDialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeCompletion();}});
 const completionObserver=new IntersectionObserver(entries=>{if(completionShown||mode!=='end'||document.querySelector('dialog[open]'))return;if(entries.some(e=>e.isIntersecting&&e.intersectionRatio>=.6)){completionShown=true;try{sessionStorage.setItem('bang-completion-shown','yes');}catch{}completionDialog.showModal();completionObserver.disconnect();}},{threshold:[.6]});
 completionObserver.observe(document.querySelector('#end .lesson-complete'));
+
+place('#intro-bang-card','bang');place('#intro-role-card','sheriff');
+
+var roleIntroController;
+function initRoleFlips(){
+ document.querySelectorAll('#roles .role-flip').forEach(f=>f.classList.add('is-revealed'));
+ if(mode==='learn')playRoleIntro();
+}
+var roleIntroSeen=false;
+async function playRoleIntro(){
+ roleIntroController?.abort();
+ let seen=roleIntroSeen;try{seen=seen||sessionStorage.getItem('bang-role-intro-seen')==='yes';}catch{}
+ if(seen)return;
+ const roles=[...document.querySelectorAll('#roles .role')];
+ if(roles.length!==4||mode!=='learn'||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ roleIntroSeen=true;try{sessionStorage.setItem('bang-role-intro-seen','yes');}catch{}
+ const controller=new AbortController();roleIntroController=controller;
+ const signal=controller.signal;
+ const scene=document.createElement('div');scene.className='role-reveal-scene';scene.setAttribute('aria-label','역할 카드 소개');
+ const status=document.createElement('p');status.className='sr-only';status.setAttribute('role','status');scene.append(status);
+ const skip=document.createElement('button');skip.className='role-reveal-skip';skip.textContent='소개 건너뛰기';skip.onclick=()=>controller.abort();scene.append(skip);
+ const layer=document.createElement('div');layer.className='role-reveal-paper';scene.append(layer);
+ const guide=document.createElement('p');guide.className='role-reveal-guide';guide.textContent='카드 이미지를 눌러 자세한 역할을 확인하세요.';scene.append(guide);
+ document.body.append(scene);document.body.classList.add('role-revealing');
+ const content=document.querySelector('#learn .lesson-content');content.inert=true;
+ window.scrollTo({top:0,behavior:'instant'});
+ const animate=async(el,frames,options)=>{if(signal.aborted)throw new DOMException('Aborted','AbortError');const animation=el.animate(frames,{...options,fill:'forwards'});const stop=()=>animation.cancel();signal.addEventListener('abort',stop,{once:true});try{await animation.finished;}finally{signal.removeEventListener('abort',stop);}};
+ const pause=ms=>new Promise((resolve,reject)=>{if(signal.aborted)return reject(new DOMException('Aborted','AbortError'));const stop=()=>{clearTimeout(timer);reject(new DOMException('Aborted','AbortError'));};const timer=setTimeout(()=>{signal.removeEventListener('abort',stop);resolve();},ms);signal.addEventListener('abort',stop,{once:true});});
+ try{
+  const bounds=layer.getBoundingClientRect();
+  const cardRects=roles.map(r=>r.querySelector('.role-flip').getBoundingClientRect());
+  const gridWidth=Math.min(bounds.width-36,270);
+  const gap=22;
+  const smallWidth=Math.min(cardRects[0].width,(gridWidth-gap)/2,(bounds.height-112)/3.3);
+  const smallHeight=smallWidth*1.5;
+  const rowGap=30;
+  const gridLeft=bounds.left+(bounds.width-(smallWidth*2+gap))/2;
+  const gridTop=bounds.top+(bounds.height-(smallHeight*2+rowGap))/2;
+  for(const [index,role] of roles.entries()){
+   status.textContent=roleNames[role.dataset.role]+' 카드';
+   const target=role.querySelector('.role-flip').getBoundingClientRect();
+   const card=document.createElement('div');card.className='role-reveal-card';
+   const rotor=document.createElement('div');rotor.className='role-reveal-rotor';
+   const back=document.createElement('div');back.className='role-reveal-back';back.textContent='★';
+   const front=role.querySelector('.card-image,.text-card').cloneNode(true);front.classList.add('role-reveal-front');rotor.append(back,front);card.append(rotor);scene.append(card);
+   const width=Math.min(247,bounds.width-44,(bounds.height-90)*2/3),height=width*1.5;
+   const x=bounds.left+(bounds.width-width)/2,y=bounds.top+(bounds.height-height)/2;
+   Object.assign(card.style,{left:x+'px',top:y+'px',width:width+'px',height:height+'px'});
+   await animate(rotor,[{transform:'rotateY(180deg)'},{transform:'rotateY(0deg)'}],{duration:650,easing:'cubic-bezier(.2,.7,.2,1)'});
+   await pause(450);
+   const tx=gridLeft+(index%2)*(smallWidth+gap);
+   const ty=gridTop+Math.floor(index/2)*(smallHeight+rowGap);
+   await animate(card,[{transform:'translate(0,0) scale(1)'},{transform:'translate('+(tx-x)+'px,'+(ty-y)+'px) scale('+(smallWidth/width)+')'}],{duration:600,easing:'cubic-bezier(.2,.7,.2,1)'});
+  }
+  scene.classList.add('has-guide');guide.classList.add('is-visible');status.textContent=guide.textContent;
+  await pause(2300);
+  await animate(scene,[{opacity:1},{opacity:0}],{duration:400});
+ }catch(error){if(error.name!=='AbortError')console.error(error);}
+ finally{scene.remove();content.inert=false;document.body.classList.remove('role-revealing');if(roleIntroController===controller)roleIntroController=null;}
+}
+
+var cardTypeStep=0;
+var cardTypeFilmBusy=false;
+var cardTypeFilmTimer;
+function showCardType(step,focus=true){
+ cardTypeStep=step;
+ clearTimeout(cardTypeFilmTimer);
+ const film=document.getElementById('types-film');if(!film)return;
+ film.classList.remove('is-playing');
+ document.querySelectorAll('[data-film-scene]').forEach(n=>n.hidden=Number(n.dataset.filmScene)!==step);
+ document.getElementById('types-film-progress').textContent=(step+1)+' / 6';
+ document.getElementById('types-film-hint').textContent=['화면을 터치하면 인물 카드를 살펴봐요 ›','화면을 터치하면 플레이 카드를 살펴봐요 ›','화면을 터치하면 갈색 테두리를 살펴봐요 ›','화면을 터치하면 파란 테두리를 살펴봐요 ›','화면을 터치하면 무기 카드를 살펴봐요 ›','카드 구성 설명이 끝났어요.'][step];
+ document.getElementById('types-film-next').hidden=step!==5;
+ film.setAttribute('role',step===5?'group':'button');
+ film.tabIndex=step===5?-1:0;
+ film.setAttribute('aria-label',['역할 카드 7장. 내 편과 승리 목표를 정해요.','인물 카드 16장. 나의 생명과 특수 능력을 정해요.','플레이 카드 80장. 갈색과 파란 테두리 모두 플레이 카드예요.','갈색 테두리 카드. 효과를 사용하고 버려요.','파란 테두리 카드. 앞에 놓고 효과를 유지해요.','무기 카드. 파란 테두리 플레이 카드의 한 종류예요.'][step]+(step===5?' 다음 버튼을 눌러 기본세팅 보기':' 화면을 터치하거나 Enter 키를 눌러 계속'));
+ void film.offsetWidth;film.classList.add('is-playing');
+ cardTypeFilmBusy=true;cardTypeFilmTimer=setTimeout(()=>{cardTypeFilmBusy=false;},matchMedia('(prefers-reduced-motion: reduce)').matches?0:1000);
+ if(focus)film.focus({preventScroll:true});
+}
+function initCardTypes(){
+ const examples={'types-film-role-one':'sheriff','types-film-role-two':'deputy','types-film-role-three':'outlaw','types-film-person-one':'bart-cassidy','types-film-person-two':'calamity-janet','types-film-person-three':'willy-the-kid','types-film-brown':'bang','types-film-blue':'barrel','types-film-brown-detail-one':'bang','types-film-brown-detail-two':'beer','types-film-blue-detail-one':'barrel','types-film-blue-detail-two':'jail','types-film-weapon-one':'schofield','types-film-weapon-two':'winchester'};
+ Object.entries(examples).forEach(([id,key])=>place('#'+id,key));
+ const film=document.getElementById('types-film');
+ const advance=()=>{if(cardTypeFilmBusy)return;if(cardTypeStep<5)showCardType(cardTypeStep+1);};
+ document.getElementById('types-film-next').onclick=e=>{e.stopPropagation();setMode('setup');};
+ film.onclick=e=>{if(!e.target.closest('button'))advance();};film.onkeydown=e=>{if(e.target===film&&(e.key==='Enter'||e.key===' ')){e.preventDefault();if(!e.repeat)advance();}};
+ showCardType(0,false);
+}
+
+function renderWholeSetup(){
+ const host=document.getElementById('whole-table-players');if(!host)return;
+ host.replaceChildren();
+ for(let i=0;i<5;i++){
+  const seat=document.createElement('div');seat.className='whole-seat';
+  const angle=(i/5)*Math.PI*2-Math.PI/2;
+  seat.style.left=(50+Math.cos(angle)*39)+'%';seat.style.top=(50+Math.sin(angle)*39)+'%';
+  const label=document.createElement('b');label.textContent=i===0?'보안관':i+'번 자리';
+  const mat=document.createElement('span');mat.className='whole-mini-mat';mat.setAttribute('aria-hidden','true');
+  for(const name of ['역할','인물']){const card=document.createElement('i');card.textContent=name;mat.append(card);}
+  const life=document.createElement('small');life.textContent='● 생명 표시';mat.append(life);
+  const hand=document.createElement('span');hand.className='whole-hand';hand.textContent='손패';
+  seat.append(label,mat,hand);host.append(seat);
+ }
+ const table=document.querySelector('.whole-table');table.setAttribute('aria-label',5+'인 전체 배치. 보안관부터 시계 방향으로 '+5+'개의 자리에 각자의 판과 손패를 놓아요. 중앙에는 뒷면이 위로 향한 뽑는 더미와 처음에는 비워 두는 버린 더미 자리가 있어요.');
+}
+
+var setupFilmStep=0;
+var setupFilmBusy=false;
+var setupFilmTimer;
+function renderSetupFilm(){
+ const host=document.getElementById('setup-film-seats');if(!host)return;host.replaceChildren();
+ const characters=['bart-cassidy','black-jack','calamity-janet','jesse-jones','kit-carlson','lucky-duke','rose-doolan'];
+ for(let i=0;i<5;i++){
+  const seat=document.createElement('div');seat.className='setup-film-seat';seat.style.setProperty('--seat-index',i);const angle=(i/5)*Math.PI*2-Math.PI/2;seat.style.left=(50+Math.cos(angle)*38)+'%';seat.style.top=(50+Math.sin(angle)*38)+'%';seat.style.setProperty('--seat-top',(50+Math.sin(angle)*38)+'%');
+  const label=document.createElement('b');label.className='setup-seat-label';label.textContent=i===0?'보안관':'자리 '+(i+1);
+  const mat=document.createElement('div');mat.className='setup-real-mat';const pic=document.createElement('img');pic.src='assets/player-mat-clean.webp';pic.alt='개인 판';pic.width=1479;pic.height=1064;mat.append(pic);
+  const role=document.createElement('span');role.className='setup-dealt-role';
+  const card=cards.find(c=>c.key==='sheriff');if(i===0&&card)role.append(image(card));else{const back=document.createElement('span');back.className='setup-card-reverse';back.textContent='?';back.setAttribute('aria-label','비밀 역할 카드, 임시 뒷면');role.append(back);}
+  const character=document.createElement('span');character.className='setup-dealt-person';const person=cards.find(c=>c.key===characters[i]);if(person)character.append(image(person));if(i===1){const ring=document.createElement('span');ring.className='setup-life-ring';ring.setAttribute('aria-hidden','true');character.append(ring);}
+  const life=document.createElement('span');life.className='setup-dealt-life';for(let j=0;j<(i===0?5:4);j++){const bullet=document.createElement('img');bullet.src='assets/life-bullet.webp';bullet.alt='';life.append(bullet);}
+  const weapon=document.createElement('span');weapon.className='setup-base-weapon';const colt=cards.find(c=>c.key==='colt-45');if(colt)weapon.append(image(colt));
+  mat.append(role,character,life,weapon);
+  const hand=document.createElement('div');hand.className='setup-dealt-hand';hand.setAttribute('aria-label','시작 생명 수만큼 받은 손패');for(let j=0;j<(i===0?5:4);j++){const back=document.createElement('span');back.className='setup-card-reverse';back.style.setProperty('--card-index',j);back.setAttribute('aria-hidden','true');hand.append(back);}
+  const handLabel=document.createElement('b');handLabel.className='setup-hand-label';handLabel.textContent='손패';hand.append(handLabel);
+  seat.append(label,mat,hand);host.append(seat);
+ }
+ document.getElementById('setup-film-board').setAttribute('aria-label',5+'인 테이블 배치 예시. 위쪽이 보안관 자리예요.');
+}
+function showSetupStep(step){
+ setupDealController?.abort();setupDealController=null;
+ setupFilmStep=step;const board=document.getElementById('setup-film-board');if(!board)return;
+ const content=[['01 / 각자의 자리','판을 하나씩 놓으세요.','각자의 앞에 개인 판을 놓고, 가운데는 비워 두세요. 콜트 45는 판에 표시된 기본 무기이며 따로 나눠 주는 카드가 아니에요.'],['02 / 역할 나누기','역할 카드를 한 장씩 받아요.','여기서는 내가 무법자인 예시예요. 내 역할은 나만 확인한 뒤 판의 역할 자리에 엎어 두세요. 보안관만 역할을 공개해요.'],['03 / 인물과 생명','인물을 공개하고 생명을 놓아요.','내 인물은 블랙 잭, 시작 생명은 4인 예시예요. 인물은 앞면으로 놓고 생명 4개를 표시해요. 보안관이라면 생명을 1개 더 받아요.'],['04 / 시작 손패','시작 생명 수만큼 카드를 받아요.','플레이 카드 더미에서 내 시작 생명 수만큼 카드를 받아 손패로 들어요.'],['05 / 중앙 카드 더미','가운데에 더미를 놓으면 준비 끝!','남은 플레이 카드는 뒷면이 위로 향하게 쌓아요. 옆에는 버린 더미 자리를 비워 두세요. 보안관부터 시계 방향으로 시작해요.'],['06 / 참조표 카드','참조표를 옆에 놓고 확인하세요.','게임에 익숙하지 않다면 참조표 카드를 사용하세요. 카드에 그려진 기호의 뜻을 빠르게 확인할 수 있어요. 플레이 카드 더미에 섞지 않고 내 옆에 놓아 두세요.']][step];
+ board.classList.remove('hand-received','setup-turn-ready');board.querySelectorAll('.setup-turn-highlight').forEach(n=>n.classList.remove('setup-turn-highlight'));board.querySelector('.setup-turn-cue')?.remove();board.dataset.stage=step;board.setAttribute('aria-label',(step===0||step===4)?'5인 전체 테이블 배치':'내 자리에서 바라본 개인 판. 왼쪽은 역할, 가운데는 인물, 오른쪽은 기본 무기 자리이며 아래쪽은 손패예요.');board.classList.remove('is-dealing');void board.offsetWidth;board.classList.add('is-dealing');
+ document.getElementById('setup-film-progress').textContent=(step+1)+' / 6';document.getElementById('setup-film-step-label').textContent=content[0];document.getElementById('setup-film-title').textContent=content[1];document.getElementById('setup-film-description').textContent=content[2];
+ document.getElementById('setup-film-back').hidden=step===0;document.getElementById('setup-film-replay').hidden=step!==5;document.getElementById('setup-film-next').hidden=step!==5;document.getElementById('setup-film-tap').hidden=step===5;document.getElementById('setup-film-reference').hidden=step!==5;board.hidden=step===5;
+ const touch=document.getElementById('setup-film-touch');touch.setAttribute('role',step===5?'group':'button');touch.tabIndex=step===5?-1:0;touch.setAttribute('aria-label',content[1]+' '+content[2]+(step===5?'':' 화면을 터치하면 다음 단계로 이동해요.'));
+ clearTimeout(setupFilmTimer);setupFilmBusy=true;
+ board.querySelectorAll('.setup-film-seat').forEach((seat,i)=>{seat.classList.toggle('is-my-seat',i===1);const label=seat.querySelector('.setup-seat-label');if(label)label.textContent=i===1&&step>0&&step<4?'내 판 · 내가 보는 방향':i===0?'보안관':'자리 '+(i+1);});
+ if(step>0&&step<5)animateSetupDeal(step);else{setupFilmBusy=false;}
+}
+function initSetupFilm(){
+ renderSetupFilm();renderSetupReadingImages();showSetupStep(0);const touch=document.getElementById('setup-film-touch');const advance=()=>{if(!setupFilmBusy&&setupFilmStep<5)showSetupStep(setupFilmStep+1);};touch.onclick=advance;touch.onkeydown=e=>{if(e.target===touch&&(e.key==='Enter'||e.key===' ')){e.preventDefault();if(!e.repeat)advance();}};
+ document.getElementById('setup-film-back').onclick=()=>showSetupStep(Math.max(0,setupFilmStep-1));document.getElementById('setup-film-replay').onclick=()=>showSetupStep(0);document.getElementById('setup-film-next').onclick=()=>setMode('turn');
+}
+
+var setupDealController;
+async function animateSetupDeal(step){
+ const controller=new AbortController();setupDealController=controller;const signal=controller.signal;
+ const board=document.getElementById('setup-film-board'),seat=board.querySelector('.is-my-seat');if(!seat){setupFilmBusy=false;return;}
+ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const hidden=[],actors=[];
+ const next=document.getElementById('setup-film-next');if(step===4)next.hidden=true;
+ const conceal=el=>{el.classList.add('setup-awaiting-card');hidden.push(el);};
+ const animation=async(el,keyframes,duration)=>{if(signal.aborted)throw new DOMException('Aborted','AbortError');const a=el.animate(keyframes,{duration,fill:'forwards',easing:'cubic-bezier(.2,.7,.2,1)'});const stop=()=>a.cancel();signal.addEventListener('abort',stop,{once:true});try{await a.finished;}finally{signal.removeEventListener('abort',stop);}};
+ const fly=async(target,key,back=false,order=0)=>{
+  const actor=document.createElement('div');actor.className='setup-flying-card';actor.setAttribute('aria-hidden','true');
+  const source=key?cards.find(c=>c.key===key):null;
+  if(source){actor.append(image(source));if(key==='black-jack'){const ring=document.createElement('span');ring.className='setup-life-ring';ring.setAttribute('aria-hidden','true');ring.style.opacity='0';const label=document.createElement('span');label.className='setup-life-callout';label.style.opacity='0';label.textContent='총알 4개 = 시작 생명 4';actor.append(ring,label);}}else{const reverse=document.createElement('span');reverse.className='setup-card-reverse';reverse.textContent='BANG!';actor.append(reverse);}
+  const bounds=board.getBoundingClientRect(),dest=target.getBoundingClientRect();
+  const width=Math.min(220,bounds.width*.68,innerHeight*.29),height=width*1.5;
+  const x=bounds.left+(bounds.width-width)/2+order*3,y=Math.max(82,bounds.top+(bounds.height-height)/2);
+  Object.assign(actor.style,{left:x+'px',top:y+'px',width:width+'px',height:height+'px'});document.body.append(actor);actors.push(actor);
+  await animation(actor,[{opacity:0,transform:'perspective(900px) rotateY(95deg) scale(.9)'},{opacity:1,transform:'perspective(900px) rotateY(0deg) scale(1)'},{opacity:1,transform:'perspective(900px) rotateY(0deg) scale(1)'}],step===3?500:1050);
+  if(key==='black-jack'){
+   const ring=actor.querySelector('.setup-life-ring'),label=actor.querySelector('.setup-life-callout');
+   await Promise.all([animation(ring,[{opacity:0,transform:'scale(1.25)'},{opacity:1,transform:'rotate(5deg)'}],350),animation(label,[{opacity:0},{opacity:1}],350)]);
+   await animation(actor,[{transform:'none'},{transform:'none'}],2650);
+
+  }
+  if(back&&source){await animation(actor,[{transform:'rotateY(0deg)'},{transform:'rotateY(90deg)'}],140);actor.replaceChildren();const reverse=document.createElement('span');reverse.className='setup-card-reverse';reverse.textContent='?';actor.append(reverse);await animation(actor,[{transform:'rotateY(90deg)'},{transform:'rotateY(0deg)'}],140);}
+  actor.querySelector('.setup-life-callout')?.remove();
+  await animation(actor,[{transform:'translate(0,0) scale(1)'},{transform:'translate('+(dest.left-x)+'px,'+(dest.top-y)+'px) scale('+(dest.width/width)+','+(dest.height/height)+')'}],600);
+  target.classList.remove('setup-awaiting-card');actor.remove();
+  if(key==='black-jack'){
+   const life=seat.querySelector('.setup-dealt-life');
+   life.classList.remove('setup-awaiting-card');
+   const bullets=[...life.querySelectorAll('img')];
+   for(const bullet of bullets)bullet.style.opacity='0';
+   for(const bullet of bullets){await animation(bullet,[{opacity:0,transform:'translateY(-45px) scale(1.5)'},{opacity:1,transform:'none'}],230);bullet.style.opacity='';}
+  }
+ };
+ const distribute=async(kind)=>{
+  const overlay=document.createElement('div');overlay.className='setup-distribution';overlay.setAttribute('aria-hidden','true');board.append(overlay);actors.push(overlay);
+  const title=document.createElement('p');title.className='setup-distribution-title';title.textContent=kind==='role'?'역할 카드를 한 장씩 나눠요':'인물 카드를 한 장씩 나눠요';overlay.append(title);
+  const deck=document.createElement('div');deck.className='setup-distribution-deck';for(let i=0;i<3;i++){const back=document.createElement('span');back.className='setup-card-reverse';back.textContent=kind==='role'?'역할':'인물';back.style.transform='translate('+(i*3)+'px,'+(-i*3)+'px)';deck.append(back);}overlay.append(deck);
+  const recipients=[];for(let i=0;i<5;i++){const recipient=document.createElement('div');recipient.className='setup-distribution-person';recipient.style.left=(i===4?50:12+(i/3)*76)+'%';recipient.style.top=(i===4?80:22)+'%';recipient.textContent=i===4?'나':'사람 '+(i+1);overlay.append(recipient);recipients.push(recipient);}
+  const bounds=overlay.getBoundingClientRect();const deckBounds=deck.getBoundingClientRect();
+  for(let i=0;i<5;i++){
+   if(signal.aborted)throw new DOMException('Aborted','AbortError');
+   const token=document.createElement('span');token.className='setup-distribution-card setup-card-reverse';token.textContent=kind==='role'?'역할':'인물';overlay.append(token);
+   const dest=recipients[i].getBoundingClientRect();const fromX=deckBounds.left-bounds.left,fromY=deckBounds.top-bounds.top;Object.assign(token.style,{left:fromX+'px',top:fromY+'px'});
+   await animation(token,[{transform:'translate(0,0) rotate(0)',opacity:1},{transform:'translate('+(dest.left+dest.width/2-deckBounds.left-18)+'px,'+(dest.top-deckBounds.top-24)+'px) rotate('+(i%2===0?-8:8)+'deg)',opacity:1}],280);
+   recipients[i].classList.add('has-card');
+  }
+  await animation(overlay,[{opacity:1},{opacity:0}],320);overlay.remove();
+ };
+ try{
+  if(reduced)return;
+  if(step===1){const target=seat.querySelector('.setup-dealt-role');conceal(target);await distribute('role');await fly(target,'outlaw',true);}
+  if(step===2){const target=seat.querySelector('.setup-dealt-person'),life=seat.querySelector('.setup-dealt-life');conceal(target);conceal(life);await distribute('person');await fly(target,'black-jack');}
+  if(step===3){
+   const hand=seat.querySelector('.setup-dealt-hand');conceal(hand);
+   const bundle=document.createElement('div');bundle.className='setup-hand-bundle';bundle.setAttribute('aria-hidden','true');
+   const boardBounds=board.getBoundingClientRect(),destination=hand.getBoundingClientRect();
+   const width=Math.min(120,boardBounds.width*.36),height=width*1.5;
+   const x=boardBounds.left+(boardBounds.width-width)/2,y=Math.max(82,boardBounds.top+20);
+   Object.assign(bundle.style,{left:x+'px',top:y+'px',width:width+'px',height:height+'px'});
+   for(let i=0;i<4;i++){const back=document.createElement('span');back.className='setup-card-reverse';back.textContent=i===3?'생명 수만큼':'';back.style.transform='translate('+(i*5)+'px,'+(-i*4)+'px)';bundle.append(back);}
+   document.body.append(bundle);actors.push(bundle);
+   await animation(bundle,[{opacity:0,transform:'scale(.9)'},{opacity:1,transform:'scale(1)'},{opacity:1,transform:'scale(1)'}],800);
+   await animation(bundle,[{transform:'translate(0,0) scale(1)'},{transform:'translate('+(destination.left+destination.width/2-x-width*.35)+'px,'+(destination.top-y)+'px) scale(.7)',opacity:0}],700);
+   hand.classList.remove('setup-awaiting-card');bundle.remove();board.classList.add('hand-received');
+  }
+  if(step===4){
+   const draw=board.querySelector('.setup-film-draw>.setup-card-reverse');conceal(draw);await fly(draw,null);
+   await animation(board,[{opacity:1},{opacity:1}],2000);
+   const cue=document.createElement('div');cue.className='setup-turn-cue';cue.setAttribute('role','status');cue.textContent='보안관부터 시작해요';board.append(cue);
+   const seats=[...board.querySelectorAll('.setup-film-seat')];
+   for(let i=0;i<seats.length;i++){
+    seats.forEach(n=>n.classList.remove('setup-turn-highlight'));seats[i].classList.add('setup-turn-highlight');
+    cue.textContent=i===0?'보안관부터 시작해요':'시계 방향으로 차례가 돌아요 ↻';
+    await animation(seats[i],[{filter:'drop-shadow(0 0 0px #f1cf8c)'},{filter:'drop-shadow(0 0 10px #f1cf8c)',offset:.3},{filter:'drop-shadow(0 0 0px #f1cf8c)'}],i===0?1150:550);
+   }
+   seats.forEach(n=>n.classList.remove('setup-turn-highlight'));seats[0].classList.add('setup-turn-highlight');
+   cue.textContent='보안관부터 시계 방향으로 시작!';board.classList.add('setup-turn-ready');
+  }
+ }catch(error){if(error.name!=='AbortError')console.error(error);}
+ finally{actors.forEach(n=>n.remove());hidden.forEach(n=>n.classList.remove('setup-awaiting-card'));seat.querySelectorAll('.setup-dealt-life img').forEach(n=>n.style.opacity='');if(setupDealController===controller){if(step>=3)board.classList.add('hand-received');setupFilmBusy=false;setupDealController=null;if(step===4){next.hidden=true;document.getElementById('setup-film-reference').hidden=true;}}}
+}
+
+
+var lessonPresentationsReady=false;
+var seenLessonPresentations=new Set();
+function setLessonReading(id,reading){
+ const view=document.getElementById(id);view.classList.toggle('is-reading',reading);
+ if(id==='setup-types'){view.querySelector('.lesson-reading').hidden=!reading;document.getElementById('types-film').hidden=reading;}
+ else{
+  document.querySelector('#setup>.setup-film').hidden=reading;
+  const details=document.querySelector('#setup>.setup-film-details');details.hidden=!reading;details.open=reading;
+  view.querySelector('[data-replay-lesson]').hidden=!reading;
+ }
+}
+function openLessonPresentation(id){
+ let seen=seenLessonPresentations.has(id);try{seen=seen||sessionStorage.getItem('bang-motion-seen-'+id)==='yes';}catch{}
+ setLessonReading(id,seen);seenLessonPresentations.add(id);try{sessionStorage.setItem('bang-motion-seen-'+id,'yes');}catch{}
+}
+function initLessonPresentations(){
+ lessonPresentationsReady=true;
+ document.querySelectorAll('[data-replay-lesson]').forEach(button=>button.onclick=()=>{
+  const id=button.dataset.replayLesson;setLessonReading(id,false);
+  if(id==='setup')showSetupStep(0);else showCardType(0,false);
+  window.scrollTo({top:0,behavior:'instant'});
+ });
+ if(['setup-types','setup'].includes(mode))openLessonPresentation(mode);
+}
+
+function renderSetupReadingImages(){
+ const source=document.getElementById('setup-film-board');if(!source)return;
+ for(const [id,stage] of [['setup-reading-personal',3],['setup-reading-whole',4]]){
+  const host=document.getElementById(id);if(!host)continue;
+  const copy=source.cloneNode(true);copy.dataset.stage=stage;copy.classList.remove('is-dealing','setup-turn-ready');copy.classList.add('hand-received');
+  copy.removeAttribute('aria-label');copy.querySelector('.setup-turn-cue')?.remove();
+  [copy,...copy.querySelectorAll('[id]')].forEach(n=>n.removeAttribute('id'));
+  copy.querySelectorAll('.setup-film-seat').forEach((seat,i)=>{seat.classList.toggle('is-my-seat',i===1);seat.classList.remove('setup-turn-highlight');seat.querySelector('.setup-seat-label').textContent=stage===3&&i===1?'내 판 · 내가 보는 방향':i===0?'보안관':'자리 '+(i+1);});
+  copy.querySelectorAll('.setup-awaiting-card').forEach(n=>n.classList.remove('setup-awaiting-card'));
+  host.replaceChildren(copy);
+ }
+}
+
